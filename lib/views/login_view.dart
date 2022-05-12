@@ -42,7 +42,8 @@ class _LoginViewState extends State<LoginView> {
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException) {
-            await showErrorDialog(context, 'User Not Found');
+            await showErrorDialog(
+                context, 'Cannot Find User with the entered Credentials');
           } else if (state.exception is WrongPasswordAuthException) {
             await showErrorDialog(context, 'Wrong Credentials');
           } else if (state.exception is GenericAuthException) {
@@ -54,73 +55,88 @@ class _LoginViewState extends State<LoginView> {
         appBar: AppBar(
           title: const Text('Login Page'),
         ),
-        body: Column(
-          children: [
-            TextField(
-              controller: _email,
-              autocorrect: false,
-              enableSuggestions: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration:
-                  const InputDecoration(hintText: 'Enter your mail Address'),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              autocorrect: false,
-              enableSuggestions: false,
-              decoration:
-                  const InputDecoration(hintText: 'Enter your Password'),
-            ),
-            TextButton(
-              child: const Text('Login'),
-              onPressed: () async {
-                // Initialize Firebase App Before Calling it.
+        body: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            children: [
+              const Text(
+                  'Please log in to your account to interact and create Notes'),
+              TextField(
+                controller: _email,
+                autocorrect: false,
+                enableSuggestions: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration:
+                    const InputDecoration(hintText: 'Enter your mail Address'),
+              ),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                autocorrect: false,
+                enableSuggestions: false,
+                decoration:
+                    const InputDecoration(hintText: 'Enter your Password'),
+              ),
+              TextButton(
+                child: const Text('Login'),
+                onPressed: () async {
+                  // Initialize Firebase App Before Calling it.
 
-                final email = _email.text;
-                final password = _password.text;
-                context.read<AuthBloc>().add(AuthEventLogIn(email, password));
-                // try {
+                  final email = _email.text;
+                  final password = _password.text;
+                  context.read<AuthBloc>().add(AuthEventLogIn(email, password));
+                  // try {
 
-                // await AuthService.firebase().logIn(
-                //   email: email,
-                //   password: password,
-                // );
-                // final user = AuthService.firebase().currentUser;
-                // // assert(user != null, 'USer is not Null');
-                // if (user?.isEmailVerified ?? false) {
-                //   await Navigator.of(context)
-                //       .pushNamedAndRemoveUntil(notesRoute, (route) => false);
-                // } else {
-                //   await Navigator.pushNamedAndRemoveUntil(
-                //       context, verifyEmailRoute, (route) => false);
-                // }
-                // } on UserNotFoundAuthException {
-                //   await showErrorDialog(
-                //     context,
-                //     'User Not Found',
-                //   );
-                // } on WrongPasswordAuthException {
-                //   await showErrorDialog(
-                //     context,
-                //     'Wrong Password',
-                //   );
-                // } on GenericAuthException catch (e) {
-                // logger.log(e.toString());
-                // await showErrorDialog(
-                //   context,
-                //   'Error : Some Error Occurred on Authentication',
-                // );
-                // }
-              },
-            ),
-            TextButton(
-                onPressed: () {
-                  // Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, (route) => false);
-                  context.read<AuthBloc>().add(const AuthEventShouldRegister());
+                  // await AuthService.firebase().logIn(
+                  //   email: email,
+                  //   password: password,
+                  // );
+                  // final user = AuthService.firebase().currentUser;
+                  // // assert(user != null, 'USer is not Null');
+                  // if (user?.isEmailVerified ?? false) {
+                  //   await Navigator.of(context)
+                  //       .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+                  // } else {
+                  //   await Navigator.pushNamedAndRemoveUntil(
+                  //       context, verifyEmailRoute, (route) => false);
+                  // }
+                  // } on UserNotFoundAuthException {
+                  //   await showErrorDialog(
+                  //     context,
+                  //     'User Not Found',
+                  //   );
+                  // } on WrongPasswordAuthException {
+                  //   await showErrorDialog(
+                  //     context,
+                  //     'Wrong Password',
+                  //   );
+                  // } on GenericAuthException catch (e) {
+                  // logger.log(e.toString());
+                  // await showErrorDialog(
+                  //   context,
+                  //   'Error : Some Error Occurred on Authentication',
+                  // );
+                  // }
                 },
-                child: const Text('Click here to Register as New User'))
-          ],
+              ),
+              TextButton(
+                  onPressed: () {
+                    // Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, (route) => false);
+                    context
+                        .read<AuthBloc>()
+                        .add(const AuthEventShouldRegister());
+                  },
+                  child: const Text('Click here to Register as New User')),
+              TextButton(
+                  onPressed: () {
+                    // Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, (route) => false);
+                    context
+                        .read<AuthBloc>()
+                        .add(const AuthEventForgotPassword(email: null));
+                  },
+                  child: const Text('Forgot Password'))
+            ],
+          ),
         ),
       ),
     );
